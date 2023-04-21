@@ -55,7 +55,7 @@ public class DateHelper extends AppCompatActivity {
         return getMonthFormat(month) + " " + day + " " + year;
     }
 
-    public static Date makeStringDate(String dateString){
+    public static Date madeStringDate(String dateString){
         String myFormat = "MMM dd yyy";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
         Date date = null;

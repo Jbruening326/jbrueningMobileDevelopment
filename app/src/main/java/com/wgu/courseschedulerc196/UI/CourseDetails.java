@@ -46,9 +46,9 @@ public class CourseDetails extends AppCompatActivity {
     private String title;
     private String startDate;
     private String endDate;
-    private List<String> statusTypes = new ArrayList<>();
+    private final List<String> statusTypes = new ArrayList<>();
     private String status;
-    private List<Instructor> listInstructors;
+    private final List<Instructor> listInstructors = new ArrayList<>();
     private Instructor instructor;
     private String note;
     private int termId;
@@ -62,16 +62,15 @@ public class CourseDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_details);
 
-
         id = getIntent().getIntExtra("id", -1);
 
         editName = findViewById(R.id.editTextCourseName);
         title = getIntent().getStringExtra("title");
 
+
         startDateButton = findViewById(R.id.courseStartDateButton);
         editStart = DateHelper.initDatePicker(startDateButton);
         startDate = getIntent().getStringExtra("start");
-
         endDateButton = findViewById(R.id.courseEndDateButton);
         editEnd = DateHelper.initDatePicker(endDateButton);
         endDate = getIntent().getStringExtra("end");
@@ -85,20 +84,13 @@ public class CourseDetails extends AppCompatActivity {
         statusTypes.add(dropped);
         statusTypes.add(planned);
         statusSpinner = findViewById(R.id.statusSpinner);
-        ArrayAdapter<String> statusArrayAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, statusTypes);
-        statusSpinner.setAdapter(statusArrayAdapter);
         status = getIntent().getStringExtra("status");
 
-        listInstructors = new ArrayList<>();
-        listInstructors.addAll(repository.getAllInstructors());
 
+        listInstructors.addAll(repository.getAllInstructors());
+        instructorSpinner = findViewById(R.id.instructorSpinner);
         instructorId = getIntent().getIntExtra("instructorId", -1);
         instructor = repository.getInstructor(instructorId);
-        instructorSpinner = findViewById(R.id.instructorSpinner);
-        ArrayAdapter<Instructor> instructorArrayAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, listInstructors);
-        instructorSpinner.setAdapter(instructorArrayAdapter);
 
         notes = findViewById(R.id.notesTextView);
         note = getIntent().getStringExtra("note");
@@ -116,11 +108,14 @@ public class CourseDetails extends AppCompatActivity {
         editName.setText(title);
         startDateButton.setText(startDate);
         endDateButton.setText(endDate);
+
+
         ArrayAdapter<String> statusArrayAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, statusTypes);
         statusSpinner.setAdapter(statusArrayAdapter);
         int statusPosition = statusArrayAdapter.getPosition(status);
         statusSpinner.setSelection(statusPosition);
+
 
         ArrayAdapter<Instructor> instructorArrayAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, listInstructors);
