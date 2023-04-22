@@ -8,4 +8,10 @@
     <item
         android:id="@+id/shareNote"
         android:title="Share Notes" />
+    <item
+        android:id="@+id/couserStartNotify"
+        android:title="Notify Start" />
+    <item
+        android:id="@+id/courseEndNotify"
+        android:title="Notify End" />
 </menu>

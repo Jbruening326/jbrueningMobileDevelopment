@@ -127,12 +127,12 @@ public class AssessmentDetails extends AppCompatActivity {
 
         else {
             if (id == -1) {
-                Assessment assessment = new Assessment(0, name, type, date, courseId);
+                Assessment assessment = new Assessment(0, name, type, course.getStartDate(), date, courseId);
                 repository.insert(assessment);
                 Toast.makeText(this, "Assessment added", Toast.LENGTH_LONG).show();
 
             } else {
-                Assessment assessment = new Assessment(id, name, type, date, courseId);
+                Assessment assessment = new Assessment(id, name, type, course.getStartDate(), date, courseId);
                 repository.update(assessment);
                 Toast.makeText(this, "Assessment updated", Toast.LENGTH_LONG).show();
             }

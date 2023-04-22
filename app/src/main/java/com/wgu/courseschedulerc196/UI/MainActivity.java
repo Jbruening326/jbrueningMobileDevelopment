@@ -97,15 +97,20 @@ public class MainActivity extends AppCompatActivity {
                 String pA = "Performance";
 
                 Assessment assessment1 = new Assessment(0, oA, oA,
+                        term1.getStartDate(),
                         DateHelper.makeDateString(15, 1, 2023),1);
                 Assessment assessment2 = new Assessment(0, "oA2", oA,
-                        DateHelper.makeDateString(1, 2, 2023), 1);
+                        term1.getStartDate(),
+                        DateHelper.makeDateString(1, 2, 2023),1);
                 Assessment assessment3 = new Assessment(0, pA, pA,
+                        term1.getStartDate(),
                         DateHelper.makeDateString(15, 2, 2023),1);
                 Assessment assessment4 = new Assessment(0, oA, oA,
+                        DateHelper.makeDateString(28, 28, 2023),
                         DateHelper.makeDateString(15, 3, 2023),2);
                 Assessment assessment5 = new Assessment(0, pA, pA,
-                        DateHelper.makeDateString(31, 5, 2023), 2);
+                        DateHelper.makeDateString(28, 28, 2023),
+                        DateHelper.makeDateString(31, 5, 2023),2);
 
 
                 repository.insert(assessment1);

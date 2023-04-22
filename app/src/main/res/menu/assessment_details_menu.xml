@@ -5,4 +5,10 @@
     <item
         android:id="@+id/deleteAssessment"
         android:title="Delete Assessment" />
+    <item
+        android:id="@+id/assessmentStartNotify"
+        android:title="Notify Start" />
+    <item
+        android:id="@+id/assessmentEndNotify"
+        android:title="Notify End" />
 </menu>

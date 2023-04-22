@@ -276,6 +276,12 @@ public class CourseDetails extends AppCompatActivity {
                     shareIntent.setType("text/plain");
                     startActivity(shareIntent);
                 }
+            case R.id.assessmentStartNotify:
+                String startDate = startDateButton.getText().toString();
+                Date myDate = DateHelper.makeStringDate(startDate);
+                Long trigger = myDate.getTime();
+
+            //case R.id.assessmentEndNotify:
 
 
         }
