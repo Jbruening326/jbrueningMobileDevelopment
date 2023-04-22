@@ -49,6 +49,8 @@ public class CourseDetails extends AppCompatActivity {
     private final List<String> statusTypes = new ArrayList<>();
     private String status;
     private final List<Instructor> listInstructors = new ArrayList<>();
+    private final List<String> stringInstructors = new ArrayList<>();
+    private String stringInstructor;
     private Instructor instructor;
     private String note;
     private int termId;
@@ -88,9 +90,20 @@ public class CourseDetails extends AppCompatActivity {
 
 
         listInstructors.addAll(repository.getAllInstructors());
+        for (int i=0; i < listInstructors.size(); i++){
+            String temp = listInstructors.get(i).toString();
+            stringInstructors.add(temp);
+        }
         instructorSpinner = findViewById(R.id.instructorSpinner);
         instructorId = getIntent().getIntExtra("instructorId", -1);
-        instructor = repository.getInstructor(instructorId);
+        try{
+            instructor = repository.getInstructor(instructorId);
+            stringInstructor = instructor.toString();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+
 
         notes = findViewById(R.id.notesTextView);
         note = getIntent().getStringExtra("note");
@@ -117,11 +130,13 @@ public class CourseDetails extends AppCompatActivity {
         statusSpinner.setSelection(statusPosition);
 
 
-        ArrayAdapter<Instructor> instructorArrayAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, listInstructors);
+        ArrayAdapter<String> instructorArrayAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, stringInstructors);
         instructorSpinner.setAdapter(instructorArrayAdapter);
-        int instructorPosition = instructorArrayAdapter.getPosition(instructor);
+        int instructorPosition = instructorArrayAdapter.getPosition(stringInstructor);
         instructorSpinner.setSelection(instructorPosition);
+
+
 
         notes.setText(note);
 
@@ -151,8 +166,12 @@ public class CourseDetails extends AppCompatActivity {
         startDate = startDateButton.getText().toString();
         endDate = endDateButton.getText().toString();
         status = statusSpinner.getSelectedItem().toString();
-        instructor = (Instructor) instructorSpinner.getSelectedItem();
-        instructorId = instructor.getInstructorId();
+        stringInstructor = instructorSpinner.getSelectedItem().toString();
+        for(Instructor i : repository.getAllInstructors()){
+            if(stringInstructor.equals(i.toString())){
+                instructorId = i.getInstructorId();
+            }
+        }
 
         note = notes.getText().toString(); // optional
         if (termId == -1){
@@ -161,7 +180,6 @@ public class CourseDetails extends AppCompatActivity {
         else{
             termId = getIntent().getIntExtra("termId", -1);
         }
-
 
         int startYear = editStart.getDatePicker().getYear();
         int startMonth = editStart.getDatePicker().getMonth();
