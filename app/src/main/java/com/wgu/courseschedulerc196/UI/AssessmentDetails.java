@@ -1,5 +1,6 @@
 package com.wgu.courseschedulerc196.UI;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
@@ -16,6 +17,11 @@ import com.wgu.courseschedulerc196.Helper.DateHelper;
 import com.wgu.courseschedulerc196.R;
 import com.wgu.courseschedulerc196.database.Repository;
 import com.wgu.courseschedulerc196.entities.Assessment;
+import com.wgu.courseschedulerc196.entities.Course;
+import com.wgu.courseschedulerc196.entities.Term;
+
+import java.util.Calendar;
+import java.util.Date;
 
 public class AssessmentDetails extends AppCompatActivity {
 
@@ -77,7 +83,6 @@ public class AssessmentDetails extends AppCompatActivity {
 
 
     public void onSaveClick(View view) {
-
         id = getIntent().getIntExtra("id", -1);
         name = editTextAssessmentName.getText().toString();
         if (performanceButton.isChecked()) {
@@ -87,18 +92,39 @@ public class AssessmentDetails extends AppCompatActivity {
         } else {
             type = "";
         }
+
+        int endYear = endDate.getDatePicker().getYear();
+        int endMonth = endDate.getDatePicker().getMonth();
+        int endDay = endDate.getDatePicker().getDayOfMonth();
+        Calendar endCalendar = Calendar.getInstance();
+        endCalendar.set(endYear, endMonth, endDay);
+
+
+
+
         date = endDateButton.getText().toString();
         if (courseId == -1){
             courseId = getIntent().getIntExtra("courseIdOnly", -1);
         }
-        else{
-            courseId = getIntent().getIntExtra("courseId", -1);
+
+        Course course = repository.getCourse(courseId);
+        String courseStart = course.getStartDate();
+        String courseEnd = course.getEndDate();
+        Date cStartDate = DateHelper.makeStringDate(courseStart);
+        Calendar cStartCalendar = Calendar.getInstance();
+        cStartCalendar.setTime(cStartDate);
+        Date cEndDate = DateHelper.makeStringDate(courseEnd);
+        Calendar cEndCalendar = Calendar.getInstance();
+        cEndCalendar.setTime(cEndDate);
+
+        if(endCalendar.compareTo(cStartCalendar) < 0 || endCalendar.compareTo(cEndCalendar) > 0){
+            Toast.makeText(this, "Assessment date must be within course date", Toast.LENGTH_SHORT).show();
         }
 
-        if (name.equals("") || type.equals("") || date.equals("")) {
+        else if (name.equals("") || type.equals("") || date.equals("")) {
             Toast.makeText(this, "All fields must be completed", Toast.LENGTH_SHORT).show();
         }
-        //Need to make sure assessment is within date of course start and end;
+
         else {
             if (id == -1) {
                 Assessment assessment = new Assessment(0, name, type, date, courseId);
@@ -132,5 +158,10 @@ public class AssessmentDetails extends AppCompatActivity {
                 }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 }

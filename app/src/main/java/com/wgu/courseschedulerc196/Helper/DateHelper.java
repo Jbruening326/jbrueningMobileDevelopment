@@ -2,7 +2,6 @@ package com.wgu.courseschedulerc196.Helper;
 
 import android.app.DatePickerDialog;
 import android.widget.Button;
-import android.widget.SimpleAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -55,7 +54,7 @@ public class DateHelper extends AppCompatActivity {
         return getMonthFormat(month) + " " + day + " " + year;
     }
 
-    public static Date madeStringDate(String dateString){
+    public static Date makeStringDate(String dateString){
         String myFormat = "MMM dd yyy";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
         Date date = null;

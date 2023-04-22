@@ -22,9 +22,11 @@ import com.wgu.courseschedulerc196.database.Repository;
 import com.wgu.courseschedulerc196.entities.Assessment;
 import com.wgu.courseschedulerc196.entities.Course;
 import com.wgu.courseschedulerc196.entities.Instructor;
+import com.wgu.courseschedulerc196.entities.Term;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class CourseDetails extends AppCompatActivity {
@@ -177,9 +179,18 @@ public class CourseDetails extends AppCompatActivity {
         if (termId == -1){
             termId = getIntent().getIntExtra("termIdOnly", -1);
         }
-        else{
-            termId = getIntent().getIntExtra("termId", -1);
-        }
+
+
+        Term term = repository.getTerm(termId);
+        String termStart = term.getStartDate();
+        String termEnd = term.getEndDate();
+        Date tStartDate = DateHelper.makeStringDate(termStart);
+        Calendar tStartCalendar = Calendar.getInstance();
+        tStartCalendar.setTime(tStartDate);
+
+        Date tEndDate = DateHelper.makeStringDate(termEnd);
+        Calendar tEndCalendar = Calendar.getInstance();
+        tEndCalendar.setTime(tEndDate);
 
         int startYear = editStart.getDatePicker().getYear();
         int startMonth = editStart.getDatePicker().getMonth();
@@ -196,6 +207,9 @@ public class CourseDetails extends AppCompatActivity {
         if (endCalendar.compareTo(startCalendar) < 0) {
             Toast.makeText(this, "End Date must be after start date", Toast.LENGTH_LONG).show();
         }
+        /*else if(startCalendar.compareTo(tStartCalendar) < 0 || endCalendar.compareTo(tEndCalendar) > 0 || startCalendar.compareTo(tEndCalendar) > 0){
+            Toast.makeText(this, "Date must fall within term dates", Toast.LENGTH_SHORT).show();
+        }*/
         else if (title.equals("") || startDate.equals("") || endDate.equals("") || status.equals("")){
             Toast.makeText(this, "Make sure all fields are completed", Toast.LENGTH_SHORT).show();
         }

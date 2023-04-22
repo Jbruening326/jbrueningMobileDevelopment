@@ -19,10 +19,35 @@ import com.wgu.courseschedulerc196.entities.Term;
 
 public class MainActivity extends AppCompatActivity {
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Repository repository = new Repository(getApplication());
+
+        if(repository.getAllInstructors().size() == 0){
+            Instructor instructor1 = new Instructor(0, "Phil",
+                    "3303303330",
+                    "phil@school.com");
+            Instructor instructor2 = new Instructor(0, "Jerry",
+                    "3303303330",
+                    "jerry@school.com");
+            Instructor instructor3 = new Instructor(0, "Hannah",
+                    "3303303330",
+                    "hannah@school.com");
+            Instructor instructor4 = new Instructor(0, "Tim",
+                    "3303303330",
+                    "tim@school.com");
+            repository.insert(instructor1);
+            repository.insert(instructor2);
+            repository.insert(instructor3);
+            repository.insert(instructor4);
+        }
+
+
     }
 
     public void onEnterClick(View view) {
@@ -57,56 +82,31 @@ public class MainActivity extends AppCompatActivity {
                 String planToTake = "Plan To Take";
 
                 Course course1 = new Course(0, "Data Structures and Algorithms",
-                        term1.getStartDate(), "2023-02-28",
+                        term1.getStartDate(), DateHelper.makeDateString(28,2,2023),
                         "Hard course", completed, 1, 1);
                 Course course2 = new Course(0, "Advanced Data Management",
-                        "2023-02-28", term1.getEndDate(),
+                        DateHelper.makeDateString(28, 28, 2023), term1.getEndDate(),
                         "Easy Course", inProgress, 1, 2);
-                /*Course course3 = new Course(0, "Software 1",
-                        term2.getStartDate(), "2023-08-31",
-                        "I can do this", planToTake, term2.getTermId());*/
-                /*Course course4 = new Course(0, "Capstone",
-                        course3.getEndDate(), term2.getEndDate(),
-                        "Last course", planToTake, term2.getTermId());*/
+
                 repository.insert(course1);
                 repository.insert(course2);
-                //repository.insert(course3);
-                //repository.insert(course4);
 
-                //Sample instructor data
-                Instructor instructor1 = new Instructor(0, "Phil",
-                        "3303303330",
-                        "phil@school.com");
-                Instructor instructor2 = new Instructor(0, "Jerry",
-                        "3303303330",
-                        "jerry@school.com");
-                Instructor instructor3 = new Instructor(0, "Hannah",
-                        "3303303330",
-                        "hannah@school.com");
-                Instructor instructor4 = new Instructor(0, "Tim",
-                        "3303303330",
-                        "tim@school.com");
-                repository.insert(instructor1);
-                repository.insert(instructor2);
-                repository.insert(instructor3);
-                repository.insert(instructor4);
 
                 //Sample assessment data
                 String oA = "Objective";
                 String pA = "Performance";
 
-                Assessment assessment1 = new Assessment(0, oA, oA, "2023-01-15", 1);
-                Assessment assessment2 = new Assessment(0, "oA2", oA, "2023-02-01", 1);
-                Assessment assessment3 = new Assessment(0, pA, pA, "2023-02-15", 1);
+                Assessment assessment1 = new Assessment(0, oA, oA,
+                        DateHelper.makeDateString(15, 1, 2023),1);
+                Assessment assessment2 = new Assessment(0, "oA2", oA,
+                        DateHelper.makeDateString(1, 2, 2023), 1);
+                Assessment assessment3 = new Assessment(0, pA, pA,
+                        DateHelper.makeDateString(15, 2, 2023),1);
+                Assessment assessment4 = new Assessment(0, oA, oA,
+                        DateHelper.makeDateString(15, 3, 2023),2);
+                Assessment assessment5 = new Assessment(0, pA, pA,
+                        DateHelper.makeDateString(31, 5, 2023), 2);
 
-                Assessment assessment4 = new Assessment(0, oA, oA, "2023-03-15", 2);
-                Assessment assessment5 = new Assessment(0, pA, pA, "2023-05-31", 2);
-
-                //Assessment assessment6 = new Assessment(0, oA, oA, "2023-07-15", course2.getCourseId());
-                //Assessment assessment7 = new Assessment(0, pA, pA, "2023-08-15", course2.getCourseId());
-
-                //Assessment assessment8 = new Assessment(0, oA, oA, "2023-09-15", course2.getCourseId());
-                //Assessment assessment9 = new Assessment(0, pA, pA, "2023-11-31", course2.getCourseId());
 
                 repository.insert(assessment1);
                 repository.insert(assessment2);

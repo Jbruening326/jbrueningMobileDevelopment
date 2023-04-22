@@ -16,7 +16,7 @@ import com.wgu.courseschedulerc196.entities.Course;
 import com.wgu.courseschedulerc196.entities.Instructor;
 import com.wgu.courseschedulerc196.entities.Term;
 
-@Database(entities = {Assessment.class, Course.class, Instructor.class, Term.class}, version = 11, exportSchema = false)
+@Database(entities = {Assessment.class, Course.class, Instructor.class, Term.class}, version = 14, exportSchema = false)
 public abstract class CourseDatabaseBuilder extends RoomDatabase {
     public abstract AssessmentDAO assessmentDAO();
     public abstract CourseDAO courseDAO();
@@ -32,6 +32,7 @@ public abstract class CourseDatabaseBuilder extends RoomDatabase {
                     INSTANCE= Room.databaseBuilder(context.getApplicationContext(), CourseDatabaseBuilder.class, "MyCourseDatabase.db")
                             .fallbackToDestructiveMigration()
                             .build();
+
                 }
             }
         }

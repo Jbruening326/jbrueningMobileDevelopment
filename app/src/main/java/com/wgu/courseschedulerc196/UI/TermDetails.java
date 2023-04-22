@@ -1,5 +1,6 @@
 package com.wgu.courseschedulerc196.UI;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -68,6 +69,12 @@ public class TermDetails extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.courseRecyclerView);//stays on create
         //on resume
+
+        if(savedInstanceState != null){
+            termName.setText(savedInstanceState.getString("termText"));
+            startDateButton.setText(savedInstanceState.getString("sDateField"));
+            endDateButton.setText(savedInstanceState.getString("eDateField"));
+        }
 
     }
 
@@ -188,6 +195,14 @@ public class TermDetails extends AppCompatActivity {
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("termText", termName.getText().toString());
+        outState.putString("sDateField", startDateButton.getText().toString());
+        outState.putString("eDateField", endDateButton.getText().toString());
     }
 
 }
