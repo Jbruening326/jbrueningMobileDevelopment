@@ -9,7 +9,7 @@
         android:id="@+id/shareNote"
         android:title="Share Notes" />
     <item
-        android:id="@+id/couserStartNotify"
+        android:id="@+id/courseStartNotify"
         android:title="Notify Start" />
     <item
         android:id="@+id/courseEndNotify"

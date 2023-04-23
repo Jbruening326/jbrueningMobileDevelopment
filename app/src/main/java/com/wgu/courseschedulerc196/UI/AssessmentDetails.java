@@ -3,7 +3,12 @@ package com.wgu.courseschedulerc196.UI;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,11 +19,11 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.wgu.courseschedulerc196.Helper.DateHelper;
+import com.wgu.courseschedulerc196.Helper.MyReceiver;
 import com.wgu.courseschedulerc196.R;
 import com.wgu.courseschedulerc196.database.Repository;
 import com.wgu.courseschedulerc196.entities.Assessment;
 import com.wgu.courseschedulerc196.entities.Course;
-import com.wgu.courseschedulerc196.entities.Term;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -28,6 +33,8 @@ public class AssessmentDetails extends AppCompatActivity {
     private EditText editTextAssessmentName;
     private RadioButton performanceButton;
     private RadioButton objectiveButton;
+    private Button startDateButton;
+    private DatePickerDialog startDate;
     private Button endDateButton;
     private DatePickerDialog endDate;
 
@@ -36,10 +43,12 @@ public class AssessmentDetails extends AppCompatActivity {
     private int id;
     private String name;
     private String type;
-    private String date;
+    private String sDate;
+    private String eDate;
     private int courseId;
 
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,9 +63,14 @@ public class AssessmentDetails extends AppCompatActivity {
         objectiveButton = findViewById(R.id.objectiveRadioButton);
         type = getIntent().getStringExtra("type");
 
+        startDateButton = findViewById(R.id.aStartDateButton);
+        startDate = DateHelper.initDatePicker(startDateButton);
+        sDate = getIntent().getStringExtra("start");
+
+
         endDateButton = findViewById(R.id.assessmentDateButton);
         endDate = DateHelper.initDatePicker(endDateButton);
-        date = getIntent().getStringExtra("end");
+        eDate = getIntent().getStringExtra("end");
 
         courseId = getIntent().getIntExtra("courseId", -1);
     }
@@ -74,7 +88,12 @@ public class AssessmentDetails extends AppCompatActivity {
         } else {
             performanceButton.toggle();
         }
-        endDateButton.setText(date);
+        startDateButton.setText(sDate);
+        endDateButton.setText(eDate);
+    }
+
+    public void onStartDateSelect(View view) {
+        startDate.show();
     }
 
     public void onEndDateSelect(View view) {
@@ -93,6 +112,12 @@ public class AssessmentDetails extends AppCompatActivity {
             type = "";
         }
 
+        int startYear = startDate.getDatePicker().getYear();
+        int startMonth = startDate.getDatePicker().getMonth();
+        int startDay = startDate.getDatePicker().getDayOfMonth();
+        Calendar startCalendar = Calendar.getInstance();
+        startCalendar.set(startYear, startMonth, startDay);
+
         int endYear = endDate.getDatePicker().getYear();
         int endMonth = endDate.getDatePicker().getMonth();
         int endDay = endDate.getDatePicker().getDayOfMonth();
@@ -100,10 +125,9 @@ public class AssessmentDetails extends AppCompatActivity {
         endCalendar.set(endYear, endMonth, endDay);
 
 
-
-
-        date = endDateButton.getText().toString();
-        if (courseId == -1){
+        sDate = startDateButton.getText().toString();
+        eDate = endDateButton.getText().toString();
+        if (courseId == -1) {
             courseId = getIntent().getIntExtra("courseIdOnly", -1);
         }
 
@@ -117,22 +141,22 @@ public class AssessmentDetails extends AppCompatActivity {
         Calendar cEndCalendar = Calendar.getInstance();
         cEndCalendar.setTime(cEndDate);
 
-        if(endCalendar.compareTo(cStartCalendar) < 0 || endCalendar.compareTo(cEndCalendar) > 0){
-            Toast.makeText(this, "Assessment date must be within course date", Toast.LENGTH_SHORT).show();
+        if (endCalendar.compareTo(startCalendar) < 0) {
+            Toast.makeText(this, "End date must be after start date", Toast.LENGTH_LONG).show();
         }
-
-        else if (name.equals("") || type.equals("") || date.equals("")) {
+        else if(startCalendar.compareTo(cStartCalendar) < 0 || endCalendar.compareTo(cEndCalendar) > 0 || startCalendar.compareTo(cEndCalendar) > 0){
+            Toast.makeText(this, "Date must fall within course dates", Toast.LENGTH_SHORT).show();
+        }
+        else if (name.equals("") || type.equals("") || eDate.equals("")) {
             Toast.makeText(this, "All fields must be completed", Toast.LENGTH_SHORT).show();
-        }
-
-        else {
+        } else {
             if (id == -1) {
-                Assessment assessment = new Assessment(0, name, type, course.getStartDate(), date, courseId);
+                Assessment assessment = new Assessment(0, name, type, course.getStartDate(), eDate, courseId);
                 repository.insert(assessment);
                 Toast.makeText(this, "Assessment added", Toast.LENGTH_LONG).show();
 
             } else {
-                Assessment assessment = new Assessment(id, name, type, course.getStartDate(), date, courseId);
+                Assessment assessment = new Assessment(id, name, type, course.getStartDate(), eDate, courseId);
                 repository.update(assessment);
                 Toast.makeText(this, "Assessment updated", Toast.LENGTH_LONG).show();
             }
@@ -156,12 +180,51 @@ public class AssessmentDetails extends AppCompatActivity {
                 } else {
                     Toast.makeText(this, "No Assessment Selected", Toast.LENGTH_SHORT).show();
                 }
+            case R.id.assessmentStartNotify:
+                if(id == -1){
+                    Toast.makeText(this, "Notification not set. Select an existing assessment first", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    String startDate = startDateButton.getText().toString();
+                    Date myDate = DateHelper.makeStringDate(startDate);
+                    Long startTrigger = myDate.getTime();
+
+                    Intent intent = new Intent(AssessmentDetails.this, MyReceiver.class);
+                    intent.putExtra("notification", editTextAssessmentName.getText().toString() + ", starts today");
+                    PendingIntent sender = PendingIntent.getBroadcast(AssessmentDetails.this, ++MainActivity.numAlert, intent, PendingIntent.FLAG_IMMUTABLE);
+                    AlarmManager alarManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                    alarManager.set(AlarmManager.RTC_WAKEUP, startTrigger, sender);
+                    Toast.makeText(this, "Notification Scheduled", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+
+            case R.id.assessmentEndNotify:
+                if(id == -1){
+                    Toast.makeText(this, "Notification not set. Select an existing assessment first", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    String startDate = startDateButton.getText().toString();
+                    Date myDate = DateHelper.makeStringDate(startDate);
+                    Long startTrigger = myDate.getTime();
+
+                    Intent intent = new Intent(AssessmentDetails.this, MyReceiver.class);
+                    intent.putExtra("notification", editTextAssessmentName.getText().toString() + ", ends today");
+                    PendingIntent sender = PendingIntent.getBroadcast(AssessmentDetails.this, ++MainActivity.numAlert, intent, PendingIntent.FLAG_IMMUTABLE);
+                    AlarmManager alarManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                    alarManager.set(AlarmManager.RTC_WAKEUP, startTrigger, sender);
+                    Toast.makeText(this, "Notification Scheduled", Toast.LENGTH_SHORT).show();
+                }
+                return true;
         }
         return super.onOptionsItemSelected(item);
+
+
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
     }
+
+
 }

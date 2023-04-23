@@ -128,7 +128,7 @@ public class TermDetails extends AppCompatActivity {
         endCalendar.set(endYear, endMonth, endDay);
 
         if(endCalendar.compareTo(startCalendar) < 0 ) {
-            Toast.makeText(this, "End Date must be after start date", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "End date must be after start date", Toast.LENGTH_LONG).show();
         }
         else if(termTitle.equals("") || startDate.equals("") || endDate.equals("")){
             Toast.makeText(this, "Make sure all fields are completed", Toast.LENGTH_SHORT).show();

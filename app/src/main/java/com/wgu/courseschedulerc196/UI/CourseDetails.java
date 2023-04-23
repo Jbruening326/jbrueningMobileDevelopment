@@ -4,7 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -17,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.wgu.courseschedulerc196.Helper.DateHelper;
+import com.wgu.courseschedulerc196.Helper.MyReceiver;
 import com.wgu.courseschedulerc196.R;
 import com.wgu.courseschedulerc196.database.Repository;
 import com.wgu.courseschedulerc196.entities.Assessment;
@@ -60,7 +64,6 @@ public class CourseDetails extends AppCompatActivity {
     private RecyclerView recyclerView;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,17 +95,16 @@ public class CourseDetails extends AppCompatActivity {
 
 
         listInstructors.addAll(repository.getAllInstructors());
-        for (int i=0; i < listInstructors.size(); i++){
+        for (int i = 0; i < listInstructors.size(); i++) {
             String temp = listInstructors.get(i).toString();
             stringInstructors.add(temp);
         }
         instructorSpinner = findViewById(R.id.instructorSpinner);
         instructorId = getIntent().getIntExtra("instructorId", -1);
-        try{
+        try {
             instructor = repository.getInstructor(instructorId);
             stringInstructor = instructor.toString();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -139,7 +141,6 @@ public class CourseDetails extends AppCompatActivity {
         instructorSpinner.setSelection(instructorPosition);
 
 
-
         notes.setText(note);
 
         final AssessmentAdapter assessmentAdapter = new AssessmentAdapter(this);
@@ -169,14 +170,14 @@ public class CourseDetails extends AppCompatActivity {
         endDate = endDateButton.getText().toString();
         status = statusSpinner.getSelectedItem().toString();
         stringInstructor = instructorSpinner.getSelectedItem().toString();
-        for(Instructor i : repository.getAllInstructors()){
-            if(stringInstructor.equals(i.toString())){
+        for (Instructor i : repository.getAllInstructors()) {
+            if (stringInstructor.equals(i.toString())) {
                 instructorId = i.getInstructorId();
             }
         }
 
         note = notes.getText().toString(); // optional
-        if (termId == -1){
+        if (termId == -1) {
             termId = getIntent().getIntExtra("termIdOnly", -1);
         }
 
@@ -205,12 +206,10 @@ public class CourseDetails extends AppCompatActivity {
         endCalendar.set(endYear, endMonth, endDay);
 
         if (endCalendar.compareTo(startCalendar) < 0) {
-            Toast.makeText(this, "End Date must be after start date", Toast.LENGTH_LONG).show();
-        }
-        /*else if(startCalendar.compareTo(tStartCalendar) < 0 || endCalendar.compareTo(tEndCalendar) > 0 || startCalendar.compareTo(tEndCalendar) > 0){
+            Toast.makeText(this, "End date must be after start date", Toast.LENGTH_LONG).show();
+        } else if (startCalendar.compareTo(tStartCalendar) < 0 || endCalendar.compareTo(tEndCalendar) > 0 || startCalendar.compareTo(tEndCalendar) > 0) {
             Toast.makeText(this, "Date must fall within term dates", Toast.LENGTH_SHORT).show();
-        }*/
-        else if (title.equals("") || startDate.equals("") || endDate.equals("") || status.equals("")){
+        } else if (title.equals("") || startDate.equals("") || endDate.equals("") || status.equals("")) {
             Toast.makeText(this, "Make sure all fields are completed", Toast.LENGTH_SHORT).show();
         }
         //Some more date comparing logic to make sure data is within term
@@ -230,13 +229,12 @@ public class CourseDetails extends AppCompatActivity {
     }
 
     public void onAddClick(View view) {
-        if(id == -1 || id == 0){
+        if (id == -1 || id == 0) {
             Toast.makeText(this, "Select a course first", Toast.LENGTH_SHORT).show();
             finish();
-        }
-        else{
+        } else {
             Intent intent = new Intent(CourseDetails.this, AssessmentDetails.class);
-            intent.putExtra("courseIdOnly",getIntent().getIntExtra("id", -1));
+            intent.putExtra("courseIdOnly", getIntent().getIntExtra("id", -1));
             startActivity(intent);
         }
     }
@@ -247,13 +245,14 @@ public class CourseDetails extends AppCompatActivity {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
+        long today = new Date().getTime();
         switch (item.getItemId()) {
             case R.id.deleteCourse:
                 id = getIntent().getIntExtra("id", -1);
                 if (id != -1) {
                     Course courseToDelete = repository.getCourse(id);
-                    for(Assessment a : repository.getAllAssessments()){
-                        if(a.getCourseId() == id){
+                    for (Assessment a : repository.getAllAssessments()) {
+                        if (a.getCourseId() == id) {
                             repository.delete(a);
                         }
                     }
@@ -266,22 +265,49 @@ public class CourseDetails extends AppCompatActivity {
             case R.id.shareNote:
                 note = notes.getText().toString();
 
-                if(note.equals("")){
+                if (note.equals("")) {
                     Toast.makeText(this, "No notes to send for this course", Toast.LENGTH_LONG).show();
-                }
-                else{
+                } else {
                     Intent shareIntent = new Intent();
                     shareIntent.setAction(Intent.ACTION_SEND);
                     shareIntent.putExtra(Intent.EXTRA_TEXT, note);
                     shareIntent.setType("text/plain");
                     startActivity(shareIntent);
                 }
-            case R.id.assessmentStartNotify:
-                String startDate = startDateButton.getText().toString();
-                Date myDate = DateHelper.makeStringDate(startDate);
-                Long trigger = myDate.getTime();
+            case R.id.courseStartNotify:
+                if (id == -1) {
+                    Toast.makeText(this, "Notification not set. Select an existing course first", Toast.LENGTH_LONG).show();
+                } else {
+                    String startDate = startDateButton.getText().toString();
+                    Date myDate = DateHelper.makeStringDate(startDate);
+                    Long startTrigger = myDate.getTime();
 
-            //case R.id.assessmentEndNotify:
+                    Intent intent = new Intent(CourseDetails.this, MyReceiver.class);
+                    intent.putExtra("notification", editName.getText().toString() + ", starts today");
+                    PendingIntent sender = PendingIntent.getBroadcast(CourseDetails.this, ++MainActivity.numAlert, intent, PendingIntent.FLAG_IMMUTABLE);
+                    AlarmManager alarManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                    alarManager.set(AlarmManager.RTC_WAKEUP, startTrigger, sender);
+                    Toast.makeText(this, "Notification Scheduled", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+
+            case R.id.courseEndNotify:
+                if (id == -1) {
+                    Toast.makeText(this, "Notification not set. Select an existing course first", Toast.LENGTH_LONG).show();
+                } else {
+                    String endDate = endDateButton.getText().toString();
+                    Date myDate = DateHelper.makeStringDate(endDate);
+                    Long startTrigger = myDate.getTime();
+
+                    Intent intent = new Intent(CourseDetails.this, MyReceiver.class);
+                    intent.putExtra("notification", editName.getText().toString() + ", ends today");
+                    PendingIntent sender = PendingIntent.getBroadcast(CourseDetails.this, ++MainActivity.numAlert, intent, PendingIntent.FLAG_IMMUTABLE);
+                    AlarmManager alarManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                    alarManager.set(AlarmManager.RTC_WAKEUP, startTrigger, sender);
+                    Toast.makeText(this, "Notification Scheduled", Toast.LENGTH_SHORT).show();
+                }
+
+                return true;
 
 
         }

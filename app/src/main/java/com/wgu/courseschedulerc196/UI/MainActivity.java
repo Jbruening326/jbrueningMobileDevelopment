@@ -18,7 +18,7 @@ import com.wgu.courseschedulerc196.entities.Term;
 
 
 public class MainActivity extends AppCompatActivity {
-
+    public static int numAlert;
 
 
     @Override
