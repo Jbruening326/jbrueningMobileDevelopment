@@ -30,16 +30,16 @@ public class MainActivity extends AppCompatActivity {
 
         if(repository.getAllInstructors().size() == 0){
             Instructor instructor1 = new Instructor(0, "Phil",
-                    "3303303330",
+                    "330-123-8765",
                     "phil@school.com");
             Instructor instructor2 = new Instructor(0, "Jerry",
-                    "3303303330",
+                    "330-321-5678",
                     "jerry@school.com");
             Instructor instructor3 = new Instructor(0, "Hannah",
-                    "3303303330",
+                    "330-213-7658",
                     "hannah@school.com");
             Instructor instructor4 = new Instructor(0, "Tim",
-                    "3303303330",
+                    "330-213-5786",
                     "tim@school.com");
             repository.insert(instructor1);
             repository.insert(instructor2);

@@ -10,7 +10,7 @@
     <ScrollView
         android:id="@+id/scrollView4"
         android:layout_width="0dp"
-        android:layout_height="300dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -128,9 +128,30 @@
                     android:id="@+id/instructorSpinner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:hint="@string/instructor_details"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:hint="@string/instructor_details" />
 
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="15dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/instructorPhoneView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Phone" />
+
+                <TextView
+                    android:id="@+id/instructorEmailView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Email" />
             </LinearLayout>
 
             <LinearLayout
@@ -145,13 +166,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ems="10"
-                    android:inputType="textPersonName"
-                    android:hint="@string/course_notes" />
+                    android:hint="@string/course_notes"
+                    android:inputType="textPersonName" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="15dp"
                 android:orientation="horizontal">
 
                 <Button

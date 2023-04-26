@@ -57,6 +57,6 @@ public class Instructor {
     @Override
     public String toString() {
 
-        return name + ", " + phoneNumber + ", " + email;
+        return name;
     }
 }

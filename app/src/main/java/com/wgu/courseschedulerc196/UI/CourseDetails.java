@@ -13,10 +13,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wgu.courseschedulerc196.Helper.DateHelper;
@@ -44,6 +46,8 @@ public class CourseDetails extends AppCompatActivity {
 
     private Spinner statusSpinner;
     private Spinner instructorSpinner;
+    private TextView instructorPhoneView;
+    private TextView instructorEmailView;
     private EditText notes;
 
     private Repository repository = new Repository(getApplication());
@@ -107,6 +111,8 @@ public class CourseDetails extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        instructorPhoneView = findViewById(R.id.instructorPhoneView);
+        instructorEmailView = findViewById(R.id.instructorEmailView);
 
 
         notes = findViewById(R.id.notesTextView);
@@ -139,6 +145,35 @@ public class CourseDetails extends AppCompatActivity {
         instructorSpinner.setAdapter(instructorArrayAdapter);
         int instructorPosition = instructorArrayAdapter.getPosition(stringInstructor);
         instructorSpinner.setSelection(instructorPosition);
+
+
+        instructorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                try {
+                    stringInstructor = instructorArrayAdapter.getItem(i);
+                    for (Instructor j : repository.getAllInstructors()) {
+                        if (stringInstructor.equals(j.toString())) {
+                            instructorId = j.getInstructorId();
+                        }
+                    }
+                    instructor = repository.getInstructor(instructorId);
+                    instructorPhoneView.setText(instructor.getPhoneNumber());
+                    instructorEmailView.setText(instructor.getEmail());
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+
+        });
 
 
         notes.setText(note);
