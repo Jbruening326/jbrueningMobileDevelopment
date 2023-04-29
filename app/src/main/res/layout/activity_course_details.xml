@@ -124,12 +124,14 @@
                     android:layout_height="wrap_content"
                     android:text="@string/instructor" />
 
-                <Spinner
-                    android:id="@+id/instructorSpinner"
-                    android:layout_width="0dp"
+                <EditText
+                    android:id="@+id/editTextInstructorName"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="@string/instructor_details" />
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:hint="Name" />
 
             </LinearLayout>
 
@@ -139,19 +141,24 @@
                 android:layout_marginBottom="15dp"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/instructorPhoneView"
+                <EditText
+                    android:id="@+id/editTextPhone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Phone" />
+                    android:ems="10"
+                    android:hint="Phone"
+                    android:inputType="phone" />
 
-                <TextView
-                    android:id="@+id/instructorEmailView"
+                <EditText
+                    android:id="@+id/editTextTextEmailAddress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Email" />
+                    android:ems="10"
+                    android:hint="Email"
+                    android:inputType="textEmailAddress" />
+
             </LinearLayout>
 
             <LinearLayout

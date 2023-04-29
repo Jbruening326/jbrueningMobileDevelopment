@@ -4,11 +4,9 @@ import android.app.Application;
 
 import com.wgu.courseschedulerc196.dao.AssessmentDAO;
 import com.wgu.courseschedulerc196.dao.CourseDAO;
-import com.wgu.courseschedulerc196.dao.InstructorDAO;
 import com.wgu.courseschedulerc196.dao.TermDAO;
 import com.wgu.courseschedulerc196.entities.Assessment;
 import com.wgu.courseschedulerc196.entities.Course;
-import com.wgu.courseschedulerc196.entities.Instructor;
 import com.wgu.courseschedulerc196.entities.Term;
 
 import java.util.List;
@@ -22,9 +20,6 @@ public class Repository {
     private CourseDAO mCourseDAO;
     private List<Course> mAllCourses;
 
-    private InstructorDAO mInstructorDAO;
-    private List<Instructor> mAllInstructors;
-    private Instructor mInstructor;
 
     private TermDAO mTermDAO;
     private List<Term> mAllTerms;
@@ -39,7 +34,6 @@ public class Repository {
         CourseDatabaseBuilder db = CourseDatabaseBuilder.getDatabase(application);
         mAssessmentDAO = db.assessmentDAO();
         mCourseDAO = db.courseDAO();
-        mInstructorDAO = db.instructorDAO();
         mTermDAO = db.termDAO();
     }
 
@@ -162,62 +156,7 @@ public class Repository {
 
 
     //Instructors
-    public List<Instructor>getAllInstructors(){
-        databaseExecutor.execute(() -> {
-            mAllInstructors = mInstructorDAO.getAllInstructors();
-        });
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return mAllInstructors;
-    }
 
-    public void insert(Instructor instructor){
-        databaseExecutor.execute(() -> {
-            mInstructorDAO.insert(instructor);
-        });
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void update(Instructor instructor){
-        databaseExecutor.execute(() -> {
-            mInstructorDAO.update(instructor);
-        });
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void delete(Instructor instructor){
-        databaseExecutor.execute(() -> {
-            mInstructorDAO.delete(instructor);
-        });
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Instructor getInstructor(int instructorId) {
-        databaseExecutor.execute(() -> {
-            mInstructor = mInstructorDAO.getInstructor(instructorId);
-        });
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return mInstructor;
-    }
 
     //Terms
     public List<Term>getAllTerms(){

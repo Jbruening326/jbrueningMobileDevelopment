@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
@@ -27,7 +28,6 @@ import com.wgu.courseschedulerc196.R;
 import com.wgu.courseschedulerc196.database.Repository;
 import com.wgu.courseschedulerc196.entities.Assessment;
 import com.wgu.courseschedulerc196.entities.Course;
-import com.wgu.courseschedulerc196.entities.Instructor;
 import com.wgu.courseschedulerc196.entities.Term;
 
 import java.util.ArrayList;
@@ -42,12 +42,10 @@ public class CourseDetails extends AppCompatActivity {
     private DatePickerDialog editEnd;
     private Button startDateButton;
     private Button endDateButton;
-
-
     private Spinner statusSpinner;
-    private Spinner instructorSpinner;
-    private TextView instructorPhoneView;
-    private TextView instructorEmailView;
+    private EditText instructorName;
+    private EditText instructorPhone;
+    private EditText instructorEmail;
     private EditText notes;
 
     private Repository repository = new Repository(getApplication());
@@ -58,16 +56,16 @@ public class CourseDetails extends AppCompatActivity {
     private String endDate;
     private final List<String> statusTypes = new ArrayList<>();
     private String status;
-    private final List<Instructor> listInstructors = new ArrayList<>();
-    private final List<String> stringInstructors = new ArrayList<>();
-    private String stringInstructor;
-    private Instructor instructor;
+    private String name;
+    private String phone;
+    private String email;
     private String note;
     private int termId;
-    private int instructorId;
+
     private RecyclerView recyclerView;
 
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,22 +95,13 @@ public class CourseDetails extends AppCompatActivity {
         statusSpinner = findViewById(R.id.statusSpinner);
         status = getIntent().getStringExtra("status");
 
+        instructorName = findViewById(R.id.editTextInstructorName);
+        name = getIntent().getStringExtra("name");
+        instructorPhone = findViewById(R.id.editTextPhone);
+        phone = getIntent().getStringExtra("phone");
+        instructorEmail = findViewById(R.id.editTextTextEmailAddress);
+        email = getIntent().getStringExtra("email");
 
-        listInstructors.addAll(repository.getAllInstructors());
-        for (int i = 0; i < listInstructors.size(); i++) {
-            String temp = listInstructors.get(i).toString();
-            stringInstructors.add(temp);
-        }
-        instructorSpinner = findViewById(R.id.instructorSpinner);
-        instructorId = getIntent().getIntExtra("instructorId", -1);
-        try {
-            instructor = repository.getInstructor(instructorId);
-            stringInstructor = instructor.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        instructorPhoneView = findViewById(R.id.instructorPhoneView);
-        instructorEmailView = findViewById(R.id.instructorEmailView);
 
 
         notes = findViewById(R.id.notesTextView);
@@ -138,43 +127,9 @@ public class CourseDetails extends AppCompatActivity {
         statusSpinner.setAdapter(statusArrayAdapter);
         int statusPosition = statusArrayAdapter.getPosition(status);
         statusSpinner.setSelection(statusPosition);
-
-
-        ArrayAdapter<String> instructorArrayAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, stringInstructors);
-        instructorSpinner.setAdapter(instructorArrayAdapter);
-        int instructorPosition = instructorArrayAdapter.getPosition(stringInstructor);
-        instructorSpinner.setSelection(instructorPosition);
-
-
-        instructorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                try {
-                    stringInstructor = instructorArrayAdapter.getItem(i);
-                    for (Instructor j : repository.getAllInstructors()) {
-                        if (stringInstructor.equals(j.toString())) {
-                            instructorId = j.getInstructorId();
-                        }
-                    }
-                    instructor = repository.getInstructor(instructorId);
-                    instructorPhoneView.setText(instructor.getPhoneNumber());
-                    instructorEmailView.setText(instructor.getEmail());
-                }
-                catch(Exception e){
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-
-        });
-
+        instructorName.setText(name);
+        instructorPhone.setText(phone);
+        instructorEmail.setText(email);
 
         notes.setText(note);
 
@@ -204,12 +159,10 @@ public class CourseDetails extends AppCompatActivity {
         startDate = startDateButton.getText().toString();
         endDate = endDateButton.getText().toString();
         status = statusSpinner.getSelectedItem().toString();
-        stringInstructor = instructorSpinner.getSelectedItem().toString();
-        for (Instructor i : repository.getAllInstructors()) {
-            if (stringInstructor.equals(i.toString())) {
-                instructorId = i.getInstructorId();
-            }
-        }
+        name = instructorName.getText().toString();
+        phone =instructorPhone.getText().toString();
+        email = instructorEmail.getText().toString();
+
 
         note = notes.getText().toString(); // optional
         if (termId == -1) {
@@ -250,12 +203,12 @@ public class CourseDetails extends AppCompatActivity {
         //Some more date comparing logic to make sure data is within term
         else {
             if (id == -1) {
-                Course course = new Course(0, title, startDate, endDate, note, status, termId, instructorId);
+                Course course = new Course(0, title, startDate, endDate, note, status, name, phone, email, termId);
                 repository.insert(course);
                 Toast.makeText(this, "Course added", Toast.LENGTH_LONG).show();
 
             } else {
-                Course course = new Course(id, title, startDate, endDate, note, status, termId, instructorId);
+                Course course = new Course(id, title, startDate, endDate, note, status, name, phone, email, termId);
                 repository.update(course);
                 Toast.makeText(this, "Course updated", Toast.LENGTH_LONG).show();
             }

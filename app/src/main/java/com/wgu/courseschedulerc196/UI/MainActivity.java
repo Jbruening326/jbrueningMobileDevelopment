@@ -13,7 +13,6 @@ import com.wgu.courseschedulerc196.R;
 import com.wgu.courseschedulerc196.database.Repository;
 import com.wgu.courseschedulerc196.entities.Assessment;
 import com.wgu.courseschedulerc196.entities.Course;
-import com.wgu.courseschedulerc196.entities.Instructor;
 import com.wgu.courseschedulerc196.entities.Term;
 
 
@@ -25,28 +24,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Repository repository = new Repository(getApplication());
-
-        if(repository.getAllInstructors().size() == 0){
-            Instructor instructor1 = new Instructor(0, "Phil",
-                    "330-123-8765",
-                    "phil@school.com");
-            Instructor instructor2 = new Instructor(0, "Jerry",
-                    "330-321-5678",
-                    "jerry@school.com");
-            Instructor instructor3 = new Instructor(0, "Hannah",
-                    "330-213-7658",
-                    "hannah@school.com");
-            Instructor instructor4 = new Instructor(0, "Tim",
-                    "330-213-5786",
-                    "tim@school.com");
-            repository.insert(instructor1);
-            repository.insert(instructor2);
-            repository.insert(instructor3);
-            repository.insert(instructor4);
-        }
-
 
     }
 
@@ -83,10 +60,10 @@ public class MainActivity extends AppCompatActivity {
 
                 Course course1 = new Course(0, "Data Structures and Algorithms",
                         term1.getStartDate(), DateHelper.makeDateString(28,2,2023),
-                        "Hard course", completed, 1, 1);
+                        "Hard course", completed, "Henry", "330-410-3765", "henry@school.org", 1);
                 Course course2 = new Course(0, "Advanced Data Management",
                         DateHelper.makeDateString(28, 28, 2023), term1.getEndDate(),
-                        "Easy Course", inProgress, 1, 2);
+                        "Easy Course", inProgress, "Michael", "410-375-6330", "mikeG@school.org", 1);
 
                 repository.insert(course1);
                 repository.insert(course2);
